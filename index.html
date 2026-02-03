@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>전북 메달 마스터 14</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { 
             --primary: #667eea; --secondary: #764ba2; 
@@ -17,7 +17,7 @@
         /* Header & Nav */
         .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 30px 20px; text-align: center; border-radius: 0 0 25px 25px; }
         .nav { display: flex; background: #fff; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
-        .tab { flex: 1; padding: 16px; border: none; background: none; color: #aaa; font-weight: 700; cursor: pointer; }
+        .tab { flex: 1; padding: 16px; border: none; background: none; color: #aaa; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
         .tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
 
         .content { padding: 20px; padding-bottom: 40px; }
@@ -30,43 +30,63 @@
 
         /* Stamps Grid */
         .stamps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .stamp { background: white; border-radius: 20px; padding: 20px 15px; text-align: center; border: 1px solid #edf2f7; transition: 0.3s; cursor: pointer; }
-        
-        /* 황금 메달 디자인 (내부 흰색 글씨 각인) */
+        .stamp { background: white; border-radius: 20px; padding: 20px 15px; text-align: center; border: 1px solid #edf2f7; transition: 0.2s; cursor: pointer; }
+        .stamp:active { transform: scale(0.95); }
         .medal-coin {
-            width: 100px; height: 100px; margin: 0 auto 12px; border-radius: 50%;
+            width: 95px; height: 95px; margin: 0 auto 12px; border-radius: 50%;
             background: linear-gradient(145deg, #FFD700 0%, #FDB931 50%, #D4AF37 100%);
-            border: 4px solid var(--gold-border);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15), inset 0 0 12px rgba(255,255,255,0.6);
-            position: relative; color: white;
+            border: 4px solid var(--gold-border); display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15), inset 0 0 12px rgba(255,255,255,0.6);
+            position: relative; color: white !important;
         }
-        .medal-coin i { font-size: 32px; margin-bottom: 4px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
-        .medal-text { font-size: 0.65rem; font-weight: 900; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-        
-        .stamp.locked .medal-coin { background: #e2e8f0; border-color: #cbd5e1; box-shadow: none; filter: grayscale(1); opacity: 0.3; }
-        .stamp-name { font-weight: 800; font-size: 0.95rem; color: #2d3748; margin-top: 5px; }
-        .stamp-date { font-size: 0.6rem; color: var(--primary); margin-top: 8px; font-weight: 600; }
+        .medal-coin i { font-size: 32px !important; margin-bottom: 4px !important; color: #ffffff !important; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25)); }
+        .medal-text { font-size: 0.6rem; font-weight: 900; color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .stamp.locked .medal-coin { background: #e2e8f0; border-color: #cbd5e1; filter: grayscale(1); opacity: 0.3; }
+
+        /* AI Route Map UI 보강 */
+        #route-map-container {
+            background: #eef2ff; border-radius: 20px; padding: 15px; margin-bottom: 20px; border: 1px solid #dee2e6;
+        }
+        #route-map { 
+            position: relative; height: 220px; background: #fff; border-radius: 15px; overflow: hidden;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; /* 격자 무늬 */
+        }
+        .map-dot { 
+            position: absolute; width: 14px; height: 14px; background: #ff4757; border-radius: 50%; 
+            border: 2px solid white; box-shadow: 0 0 10px rgba(255, 71, 87, 0.5); transform: translate(-50%, -50%); z-index: 5; 
+        }
+        .map-line {
+            position: absolute; background: var(--primary); height: 2px; transform-origin: top left; opacity: 0.4; z-index: 1;
+        }
+        .route-step {
+            background: #fff; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #eee;
+            display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+        }
+        .step-num {
+            width: 24px; height: 24px; background: var(--primary); color: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7rem;
+        }
 
         /* Modal */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(5px); }
         .modal-body { background: white; border-radius: 35px; padding: 35px; width: 100%; max-width: 360px; text-align: center; }
-        .big-medal-box { transform: scale(1.7); margin: 40px auto; animation: medalRotate 5s linear infinite; }
+        .big-medal-box { transform: scale(1.6); margin: 45px auto; animation: medalRotate 5s linear infinite; display: flex; justify-content: center; }
 
         @keyframes medalRotate { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header class="header">
             <h1>전북 메달 마스터 14</h1>
-            <p>황금빛 메달 속에 담긴 나의 기록</p>
+            <p>AI가 추천하는 나만의 여정</p>
         </header>
 
         <nav class="nav">
             <button class="tab active" onclick="switchTab('scanner', event)">인증하기</button>
             <button class="tab" onclick="switchTab('stamps', event)">보관함</button>
+            <button class="tab" onclick="switchTab('ai-route', event)">AI 경로</button>
             <button class="tab" onclick="switchTab('rewards', event)">보상</button>
         </nav>
 
@@ -74,33 +94,50 @@
             <div id="scanner" class="tab-content active">
                 <div class="camera-box"><div id="reader"></div></div>
                 <div style="margin-top:25px; text-align:center;">
-                    <p style="color:#4a5568; font-weight:700;">QR 스캔으로 메달 획득</p>
-                    <p style="color:#a0aec0; font-size:0.8rem; margin-top:5px;">장소의 형상과 이름이 새겨진 메달이 생성됩니다.</p>
+                    <p style="color:#4a5568; font-weight:700;">랜드마크 QR 스캔</p>
+                    <p style="color:#a0aec0; font-size:0.8rem; margin-top:5px;">장소의 그림과 이름이 각인된 메달을 모으세요.</p>
                 </div>
             </div>
 
             <div id="stamps" class="tab-content">
-                <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:20px; text-align:center; border:1px solid #eee;">
-                    <span id="count-txt" style="font-weight:800; color:var(--primary);">0</span> / 14 수집됨
+                <div style="margin-bottom:15px; text-align:right; font-size:0.85rem; font-weight:bold; color:var(--primary);">
+                    수집 현황: <span id="count-txt">0</span>/14
                 </div>
                 <div class="stamps-grid" id="stamps-grid"></div>
             </div>
 
+            <div id="ai-route" class="tab-content">
+                <div style="margin-bottom:20px;">
+                    <h3 style="color:var(--secondary); font-size:1.1rem; margin-bottom:5px;">✨ AI 추천 코스</h3>
+                    <p style="font-size:0.75rem; color:#718096;">아직 방문하지 않은 장소 중 최적의 경로를 계산했습니다.</p>
+                </div>
+                
+                <div id="route-map-container">
+                    <div id="route-map"><div id="map-inner"></div></div>
+                </div>
+
+                <div id="route-list"></div>
+                
+                <button onclick="generateAIRoute()" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:15px; font-weight:bold; cursor:pointer; margin-top:10px; box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);">
+                    코스 새로고침
+                </button>
+            </div>
+
             <div id="rewards" class="tab-content">
-                <h3 style="margin-bottom:20px;">🏅 달성 보상</h3>
+                <h3 style="margin-bottom:20px;">🎁 특별 보상</h3>
                 <div id="reward-list"></div>
-                <button onclick="resetAllData()" style="width:100%; margin-top:30px; padding:12px; background:#fee2e2; color:#ef4444; border:none; border-radius:12px; font-size:0.8rem; font-weight:bold;">데이터 전체 초기화</button>
+                <button onclick="resetData()" style="width:100%; margin-top:40px; padding:12px; background:#fff1f1; color:#ef4444; border:1px solid #fee2e2; border-radius:12px; font-size:0.75rem; font-weight:bold;">데이터 초기화</button>
             </div>
         </main>
     </div>
 
     <div id="medal-modal" class="modal">
         <div class="modal-body">
-            <h2 id="modal-title" style="color:var(--gold-dark);">수집 성공!</h2>
+            <h2 id="modal-title" style="color:var(--gold-dark);">메달 수집!</h2>
             <div id="modal-medal-box" class="big-medal-box"></div>
             <p id="modal-time" style="font-size:0.75rem; color:#a0aec0; margin-bottom:15px;"></p>
-            <div id="ai-message" style="background:#f8f9fa; padding:15px; border-radius:15px; font-size:0.85rem; text-align:left; margin-bottom:20px;"></div>
-            <button onclick="closeModal()" style="width:100%; padding:16px; background:linear-gradient(to right, var(--primary), var(--secondary)); color:white; border:none; border-radius:18px; font-weight:bold;">보관함 저장</button>
+            <div id="ai-message" style="background:#f0f4ff; padding:15px; border-radius:15px; font-size:0.85rem; text-align:left; margin-bottom:20px; line-height:1.5; color:#4a5568;"></div>
+            <button onclick="closeModal()" style="width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:15px; font-weight:bold;">보관함에 저장</button>
         </div>
     </div>
 
@@ -109,30 +146,24 @@
         const GEMINI_API_KEY = "AIzaSyCVHba-NStXNvtUE7g25iir4zyRHWkqXH8"; 
         
         let landmarks = [
-            { id: 1, region: '전주', name: '경기전', icon: 'fa-solid fa-archway' },
-            { id: 2, region: '군산', name: '철길마을', icon: 'fa-solid fa-train-subway' },
-            { id: 3, region: '익산', name: '미륵사지', icon: 'fa-solid fa-monument' },
-            { id: 4, region: '정읍', name: '단풍터널', icon: 'fa-solid fa-leaf' },
-            { id: 5, region: '남원', name: '광한루원', icon: 'fa-solid fa-moon' },
-            { id: 6, region: '김제', name: '벽골제', icon: 'fa-solid fa-wheat-awn' },
-            { id: 7, region: '완주', name: '예술촌', icon: 'fa-solid fa-palette' },
-            { id: 8, region: '진안', name: '마이산', icon: 'fa-solid fa-mountain-sun' },
-            { id: 9, region: '무주', name: '덕유산', icon: 'fa-solid fa-snowflake' },
-            { id: 10, region: '장수', name: '논개사당', icon: 'fa-solid fa-torii-gate' },
-            { id: 11, region: '임실', name: '치즈파크', icon: 'fa-solid fa-cheese' },
-            { id: 12, region: '순창', name: '구름다리', icon: 'fa-solid fa-bridge' },
-            { id: 13, region: '고창', name: '고창읍성', icon: 'fa-solid fa-fort-awesome' },
-            { id: 14, region: '부안', name: '채석강', icon: 'fa-solid fa-water' }
+            { id: 1, region: '전주', name: '경기전', icon: 'fa-solid fa-archway', x: 50, y: 30 },
+            { id: 2, region: '군산', name: '철길마을', icon: 'fa-solid fa-train-subway', x: 20, y: 20 },
+            { id: 3, region: '익산', name: '미륵사지', icon: 'fa-solid fa-monument', x: 35, y: 15 },
+            { id: 4, region: '정읍', name: '내장산', icon: 'fa-solid fa-leaf', x: 30, y: 70 },
+            { id: 5, region: '남원', name: '광한루원', icon: 'fa-solid fa-moon', x: 70, y: 80 },
+            { id: 6, region: '김제', name: '벽골제', icon: 'fa-solid fa-wheat-awn', x: 25, y: 45 },
+            { id: 7, region: '완주', name: '예술촌', icon: 'fa-solid fa-palette', x: 55, y: 20 },
+            { id: 8, region: '진안', name: '마이산', icon: 'fa-solid fa-mountain-sun', x: 75, y: 35 },
+            { id: 9, region: '무주', name: '덕유산', icon: 'fa-solid fa-snowflake', x: 85, y: 25 },
+            { id: 10, region: '장수', name: '논개사당', icon: 'fa-solid fa-torii-gate', x: 80, y: 55 },
+            { id: 11, region: '임실', name: '치즈파크', icon: 'fa-solid fa-cheese', x: 60, y: 60 },
+            { id: 12, region: '순창', name: '강천산', icon: 'fa-solid fa-bridge', x: 50, y: 85 },
+            { id: 13, region: '고창', name: '고창읍성', icon: 'fa-solid fa-fort-awesome', x: 15, y: 80 },
+            { id: 14, region: '부안', name: '채석강', icon: 'fa-solid fa-water', x: 10, y: 55 }
         ];
 
-        // 1. 메달 코인 생성 (그림 + 흰색 텍스트)
         function generateMedalCoin(spot) {
-            return `
-                <div class="medal-coin">
-                    <i class="${spot.icon}"></i>
-                    <div class="medal-text">${spot.name}</div>
-                </div>
-            `;
+            return `<div class="medal-coin"><i class="${spot.icon}"></i><div class="medal-text">${spot.name}</div></div>`;
         }
 
         window.onload = () => { loadProgress(); startScanner(); };
@@ -144,7 +175,6 @@
                 parsed.forEach((p, i) => { if(landmarks[i]) landmarks[i] = {...landmarks[i], ...p}; });
             }
         }
-
         function saveProgress() { localStorage.setItem('jb_medal_v_final', JSON.stringify(landmarks)); }
 
         async function startScanner() {
@@ -153,10 +183,13 @@
             html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (txt) => {
                 if(txt === "MASTER_ALL") {
                     landmarks.forEach(l => { l.collected = true; l.date = new Date().toLocaleString(); });
-                    saveProgress(); location.reload(); return;
+                    saveProgress(); renderStamps(); switchTab('stamps'); return;
                 }
                 const spot = landmarks.find(l => l.id === parseInt(txt));
-                if(spot && !spot.collected) processMedal(spot);
+                if (spot) {
+                    if (spot.collected) alert("이미 수집한 메달입니다! 🏅");
+                    else processMedal(spot);
+                }
             }).catch(()=>{});
         }
 
@@ -164,18 +197,17 @@
             if (html5QrCode) await html5QrCode.stop().catch(()=>{});
             const now = new Date();
             const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
-            
-            spot.collected = true;
-            spot.date = timeStr;
-            saveProgress();
+            spot.collected = true; spot.date = timeStr; saveProgress();
 
             document.getElementById('modal-title').innerText = `${spot.region} 메달`;
-            document.getElementById('modal-time').innerText = `획득: ${timeStr}`;
+            document.getElementById('modal-time').innerText = `수집일시: ${timeStr}`;
             document.getElementById('modal-medal-box').innerHTML = generateMedalCoin(spot);
+            
+            document.getElementById('ai-message').innerText = "AI가 방문 기록을 분석 중입니다...";
+            document.getElementById('medal-modal').style.display = 'flex';
             
             const msg = await fetchGemini(spot);
             document.getElementById('ai-message').innerText = msg;
-            document.getElementById('medal-modal').style.display = 'flex';
         }
 
         async function fetchGemini(spot) {
@@ -183,16 +215,15 @@
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `${spot.name} 방문 축하 멘트 한줄 써줘.` }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `${spot.name} 방문 기념 축하 메시지 한줄 써줘.` }] }] })
                 });
                 const data = await res.json();
                 return data.candidates[0].content.parts[0].text;
-            } catch { return "멋진 여정을 응원합니다!"; }
+            } catch (e) { return "전북의 아름다움을 수집하셨군요!"; }
         }
 
         function renderStamps() {
-            const g = document.getElementById('stamps-grid');
-            g.innerHTML = '';
+            const g = document.getElementById('stamps-grid'); g.innerHTML = '';
             landmarks.forEach((l) => {
                 const d = document.createElement('div');
                 d.className = `stamp ${l.collected ? 'collected' : 'locked'}`;
@@ -201,14 +232,68 @@
                         l.collected = false; delete l.date; saveProgress(); renderStamps();
                     }
                 };
-                d.innerHTML = `
-                    ${generateMedalCoin(l)}
-                    <div class="stamp-name">${l.region}</div>
-                    ${l.collected ? `<div class="stamp-date">${l.date}</div>` : ''}
-                `;
+                d.innerHTML = `${generateMedalCoin(l)}<div class="stamp-name">${l.region}</div>${l.collected ? `<div class="stamp-date">${l.date} 수집</div>` : ''}`;
                 g.appendChild(d);
             });
             document.getElementById('count-txt').innerText = landmarks.filter(l => l.collected).length;
+        }
+
+        // AI 경로 생성 로직 보강
+        function generateAIRoute() {
+            const uncollected = landmarks.filter(l => !l.collected).sort(() => 0.5 - Math.random()).slice(0, 3);
+            const routeList = document.getElementById('route-list');
+            const mapInner = document.getElementById('map-inner');
+            routeList.innerHTML = ''; mapInner.innerHTML = '';
+            
+            if(uncollected.length === 0) {
+                routeList.innerHTML = "<div class='route-step'>🎉 모든 메달을 정복하셨습니다!</div>";
+                return;
+            }
+
+            uncollected.forEach((spot, i) => {
+                // 리스트 추가
+                routeList.innerHTML += `
+                    <div class="route-step">
+                        <div class="step-num">${i+1}</div>
+                        <div>
+                            <div style="font-weight:bold;">${spot.name}</div>
+                            <div style="font-size:0.7rem; color:#999;">${spot.region} 지역 명소</div>
+                        </div>
+                    </div>`;
+                
+                // 지도 도트 찍기
+                const dot = document.createElement('div');
+                dot.className = 'map-dot';
+                dot.style.left = `${spot.x}%`;
+                dot.style.top = `${spot.y}%`;
+                mapInner.appendChild(dot);
+
+                // 도트 사이 선 연결 (시각화)
+                if (i > 0) {
+                    const prev = uncollected[i-1];
+                    const line = document.createElement('div');
+                    line.className = 'map-line';
+                    const dist = Math.sqrt(Math.pow(spot.x - prev.x, 2) + Math.pow(spot.y - prev.y, 2));
+                    const angle = Math.atan2(spot.y - prev.y, spot.x - prev.x) * 180 / Math.PI;
+                    line.style.width = `${dist * 4.3}px`; // 컨테이너 너비 비례 조정
+                    line.style.left = `${prev.x}%`;
+                    line.style.top = `${prev.y}%`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    mapInner.appendChild(line);
+                }
+            });
+        }
+
+        function renderRewards() {
+            const r = document.getElementById('reward-list'); r.innerHTML = '';
+            const count = landmarks.filter(l => l.collected).length;
+            [{n:3, g:'커피 쿠폰'}, {n:7, g:'상품권 1만원'}, {n:14, g:'한정판 실물 메달'}].forEach(m => {
+                const active = count >= m.n;
+                r.innerHTML += `<div style="background:#fff; border:1px solid #eee; border-radius:15px; padding:18px; margin-bottom:12px; display:flex; align-items:center; gap:15px; ${active ? 'border-color:var(--gold); background:#fffdf0; box-shadow:0 4px 10px rgba(212,175,55,0.1);' : ''}">
+                    <div style="font-size:1.6rem">${active ? '🎁' : '🔒'}</div>
+                    <div><h4 style="font-size:0.9rem;">${m.n}개 수집 보상</h4><p style="font-size:0.75rem; color:#718096;">${active ? `획득 완료: ${m.g}` : `${m.n-count}개 더 모으면 해제`}</p></div>
+                </div>`;
+            });
         }
 
         function switchTab(t, e) {
@@ -216,28 +301,14 @@
             if(e) e.target.classList.add('active');
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(t).classList.add('active');
+            
             if (t === 'stamps') renderStamps();
+            if (t === 'ai-route') generateAIRoute();
             if (t === 'rewards') renderRewards();
+            if (t === 'scanner') startScanner();
         }
 
-        function renderRewards() {
-            const r = document.getElementById('reward-list');
-            r.innerHTML = '';
-            const count = landmarks.filter(l => l.collected).length;
-            [{n:3, g:'커피'}, {n:7, g:'상품권'}, {n:14, g:'한정 굿즈'}].forEach(m => {
-                const active = count >= m.n;
-                r.innerHTML += `
-                    <div style="background:#fff; border:1px solid #eee; border-radius:15px; padding:15px; margin-bottom:12px; display:flex; align-items:center; gap:12px; ${active ? 'border-color:var(--gold); background:#fffdf0;' : ''}">
-                        <div style="font-size:1.4rem">${active ? '🎁' : '🔒'}</div>
-                        <div>
-                            <h4 style="font-size:0.9rem;">${m.n}개 달성 보상</h4>
-                            <p style="font-size:0.75rem; color:#718096;">${active ? `획득 완료: ${m.g}` : `${m.n-count}개 더 필요`}</p>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function resetAllData() { if(confirm("정말로 모든 수집 정보를 초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
+        function resetData() { if(confirm("모든 수집 데이터를 초기화하시겠습니까?")) { localStorage.clear(); location.reload(); } }
         function closeModal() { document.getElementById('medal-modal').style.display = 'none'; switchTab('stamps'); }
         let html5QrCode;
     </script>
